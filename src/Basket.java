@@ -1,6 +1,6 @@
 import java.io.*;
 
-public class Basket {
+public class Basket implements Serializable {
     private int[] price;
     private String[] product;
     private int[] amount;
@@ -20,7 +20,6 @@ public class Basket {
     // метод добавления amount штук продукта номер productNum в корзину
     public void addToCart(int productNum, int amount) {
         this.amount[productNum] += amount;
-        saveTxt(new File("basket.txt"));
     }
 
     // метод вывода на экран покупательской корзины
@@ -37,52 +36,25 @@ public class Basket {
         System.out.println("Итого: " + sumProducts);
     }
 
-    // метод сохранения корзины в текстовый файл
-    public void saveTxt(File textFile) {
-        try (FileWriter writer = new FileWriter(textFile)) {
-            for (int i = 0; i < amount.length; i++) {
-                writer.write(price[i] + "@");
-            }
-            writer.write("\n");
-            for (int i = 0; i < amount.length; i++) {
-                writer.write(product[i] + "@");
-            }
-            writer.write("\n");
-            for (int i : amount) {
-                writer.write(i + "@");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    // метод для сохранения в файл в бинарном формате
+    public void saveBin(File file) {
+        try (FileOutputStream fos = new FileOutputStream(file);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(this);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
-    // метод восстановления объекта корзины из текстового файла, в который ранее была она сохранена
-    static Basket loadFromTxtFile(File textFile) {
-        try (BufferedReader br = new BufferedReader(new FileReader(textFile))) {
-            String price = br.readLine(); // первая строка содержит массив цен
-            String product = br.readLine(); // вторая строка содержит массив названий товара
-            String amount = br.readLine(); // третья строка содержит массив количества набранных товаров
-
-            // преобразуем строку с ценами в интовый массив
-            String[] priceStr = price.split("@");
-            int[] priceInt = new int[priceStr.length];
-            for (int i = 0; i < priceInt.length; i++) {
-                priceInt[i] = Integer.parseInt(priceStr[i]);
-            } // готово
-
-            String[] productStr = product.split("@");
-
-            // преобразуем строку с количеством набранных товаров в интовый массив
-            String[] accountStr = amount.split("@");
-            int[] accountInt = new int[accountStr.length];
-            for (int i = 0; i < accountInt.length; i++) {
-                accountInt[i] = Integer.parseInt(accountStr[i]);
-            } // готово
-
-            // создаем объект КОРЗИНА из полученных массивов и возвращаем ее
-            return new Basket(priceInt, productStr, accountInt);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    // метод для загрузки корзины из бинарного файла
+    static Basket loadFromBinFile(File file) {
+        Basket basket = null;
+        try (FileInputStream fis = new FileInputStream(file);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            basket = (Basket) ois.readObject();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
+        return basket;
     }
 }

@@ -8,12 +8,12 @@ public class Main {
         int[] price = {50, 14, 80};
         String[] product = {"Молоко", "Хлеб", "Гречневая крупа"};
         Basket basket;
-        File textFile = new File("basket.txt");
+        File file = new File("basket.bin");
 
         // проверяем существует ли файл basket.txt
-        if (textFile.exists()) {
+        if (file.exists()) {
             // если существует, то создаем корзину на основе данных из файла
-            basket = Basket.loadFromTxtFile(textFile);
+            basket = Basket.loadFromBinFile(file);
         } else {
             // если не существует, то создаем новую пустую корзину
             basket = new Basket(price, product);
@@ -40,6 +40,7 @@ public class Main {
             int productCount = Integer.parseInt(parts[1]);
             // в массиве amount указали, что общее количество введенного продукта изменилось
             basket.addToCart(productNumber, productCount);
+            basket.saveBin(file);
         }
 
         basket.printCart();
