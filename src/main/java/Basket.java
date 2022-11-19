@@ -1,3 +1,6 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.*;
 
 public class Basket {
@@ -55,33 +58,28 @@ public class Basket {
         }
     }
 
-    // метод восстановления объекта корзины из текстового файла, в который ранее была она сохранена
-    static Basket loadFromTxtFile(File textFile) {
-        try (BufferedReader br = new BufferedReader(new FileReader(textFile))) {
-            String price = br.readLine(); // первая строка содержит массив цен
-            String product = br.readLine(); // вторая строка содержит массив названий товара
-            String amount = br.readLine(); // третья строка содержит массив количества набранных товаров
-
-            // преобразуем строку с ценами в интовый массив
-            String[] priceStr = price.split("@");
-            int[] priceInt = new int[priceStr.length];
-            for (int i = 0; i < priceInt.length; i++) {
-                priceInt[i] = Integer.parseInt(priceStr[i]);
-            } // готово
-
-            String[] productStr = product.split("@");
-
-            // преобразуем строку с количеством набранных товаров в интовый массив
-            String[] accountStr = amount.split("@");
-            int[] accountInt = new int[accountStr.length];
-            for (int i = 0; i < accountInt.length; i++) {
-                accountInt[i] = Integer.parseInt(accountStr[i]);
-            } // готово
-
-            // создаем объект КОРЗИНА из полученных массивов и возвращаем ее
-            return new Basket(priceInt, productStr, accountInt);
+    public void saveJson(File jsonFile) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        String json = gson.toJson(this);
+        try (FileWriter file = new FileWriter(jsonFile)) {
+            file.write(json);
+            file.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+    }
+
+    static Basket loadFromJson(File jsonFile) {
+        String json = null;
+        try (BufferedReader br = new BufferedReader(new FileReader(jsonFile))) {
+            json = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        Basket basket = gson.fromJson(json, Basket.class);
+        return basket;
     }
 }
