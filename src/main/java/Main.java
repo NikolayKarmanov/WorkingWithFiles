@@ -52,10 +52,12 @@ public class Main {
             int productCount = Integer.parseInt(parts[1]);
             // сохраняем номер и количество продукта в корзине
             basket.addToCart(productNumber, productCount);
-            // сохраняем состояние корзины в json-файл
+            // сохраняем состояние корзины, если это указано в настройках
             Parameters save = new Parameters("save");
             if (save.getEnabled()) {
+                // создаем файл с именем, указанным в настройках
                 File saveFile = new File(save.getFileName());
+                // сохраняем корзину в файл, расширение которого указано в настройках (json или text)
                 if (save.getFormat().equals("json")) {
                     basket.saveJson(saveFile);
                 } else {
