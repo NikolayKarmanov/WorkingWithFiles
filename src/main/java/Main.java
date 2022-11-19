@@ -1,4 +1,5 @@
 import com.opencsv.CSVWriter;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } // если лог-файл существует, то просто будем дописывать в него новые событие
+        }
 
         // Вывод списка продуктов с ценами на экран
         for (int i = 0; i < product.length; i++) {
@@ -62,7 +63,11 @@ public class Main {
             // сохраняем выполненное действие в лог-файл
             log.log(enteredNumber, productCount);
         }
+
+        // сохраняем все выполненные действия в лог-файл
         log.exportAsCSV(logFile);
+
+        // выводим корзину на экран
         basket.printCart();
     }
 }

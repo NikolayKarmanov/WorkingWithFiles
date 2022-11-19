@@ -39,25 +39,7 @@ public class Basket {
         System.out.println("Итого: " + sumProducts);
     }
 
-    // метод сохранения корзины в текстовый файл
-    public void saveTxt(File textFile) {
-        try (FileWriter writer = new FileWriter(textFile)) {
-            for (int i = 0; i < amount.length; i++) {
-                writer.write(price[i] + "@");
-            }
-            writer.write("\n");
-            for (int i = 0; i < amount.length; i++) {
-                writer.write(product[i] + "@");
-            }
-            writer.write("\n");
-            for (int i : amount) {
-                writer.write(i + "@");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    // метод сохранения корзины в json-файл
     public void saveJson(File jsonFile) {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
@@ -70,6 +52,7 @@ public class Basket {
         }
     }
 
+    // метод восстановления корзины из json-файла
     static Basket loadFromJson(File jsonFile) {
         String json = null;
         try (BufferedReader br = new BufferedReader(new FileReader(jsonFile))) {
