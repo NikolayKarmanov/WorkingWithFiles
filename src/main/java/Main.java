@@ -28,8 +28,6 @@ public class Main {
             basket = new Basket(price, product);
         }
 
-
-
         // Вывод списка продуктов с ценами на экран
         for (int i = 0; i < product.length; i++) {
             System.out.println((i + 1) + ". " + product[i] + " " + price[i] + " руб/шт");
