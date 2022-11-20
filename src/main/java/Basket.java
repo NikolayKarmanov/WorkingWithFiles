@@ -1,3 +1,6 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.*;
 
 public class Basket {
@@ -83,5 +86,32 @@ public class Basket {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // метод сохранения корзины в json-файл
+    public void saveJson(File jsonFile) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        String json = gson.toJson(this);
+        try (FileWriter file = new FileWriter(jsonFile)) {
+            file.write(json);
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // метод восстановления корзины из json-файла
+    static Basket loadFromJson(File jsonFile) {
+        String json = null;
+        try (BufferedReader br = new BufferedReader(new FileReader(jsonFile))) {
+            json = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        Basket basket = gson.fromJson(json, Basket.class);
+        return basket;
     }
 }
